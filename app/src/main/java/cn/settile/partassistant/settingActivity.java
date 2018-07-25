@@ -28,7 +28,7 @@ public class settingActivity extends AppCompatActivity
         ctx = this;
         setList = findViewById(R.id.set_listview);
         ArrayAdapter adapter = new ArrayAdapter<String>(this, android.R.layout.simple_expandable_list_item_1);
-        adapter.addAll("操作流程", "联系作者");
+        adapter.addAll("操作流程", "联系作者", "关于开源");
         setList.setAdapter(adapter);
 
         setList.setOnItemClickListener(new AdapterView.OnItemClickListener()
@@ -47,8 +47,14 @@ public class settingActivity extends AppCompatActivity
                     ImageView imageView = new ImageView(ctx);
                     imageView.setImageResource(R.drawable.img_qrcode);
                     new AlertDialog.Builder(ctx)
-                            .setMessage("欢迎加入软件交流群！\nqq群：680497357\nbilibili：luern0313")
+                            .setMessage("如果你不会用/发现bug\n欢迎加入软件交流群！\nqq群：680497357\nbilibili：luern0313")
                             .setView(imageView)
+                            .setPositiveButton("确定", null).show();
+                }
+                else if(position == 2)
+                {
+                    new AlertDialog.Builder(ctx)
+                            .setMessage("本应用源码在github开源~\n欢迎点star&帮助修改代码~\n地址：https://github.com/luern0313/BiliPartAssistant\n（在github搜索BiliPartAssistant）")
                             .setPositiveButton("确定", null).show();
                 }
             }
