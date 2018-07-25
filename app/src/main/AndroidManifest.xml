@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="cn.settile.partassistant">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/icon_icon"
+        android:label="@string/app_name"
+        android:roundIcon="@drawable/icon_icon"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".favorboxActivity"
+            android:label="我的收藏夹" />
+        <activity
+            android:name=".favorvidActivity"
+            android:label="收藏夹" />
+        <activity
+            android:name=".settingActivity"
+            android:label="设置"/>
+
+        <receiver android:name=".remindWidget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="cn.settile.partassistant.widget.refresh" />
+                <action android:name="cn.settile.partassistant.widget.click" />
+                <!--<category android:name="android.intent.category.DEFAULT" />-->
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/remind_widget_info" />
+        </receiver>
+
+        <service android:name=".remindItem"
+            android:permission="android.permission.BIND_REMOTEVIEWS"
+            android:exported="false"
+            android:enabled="true"/>
+    </application>
+
+</manifest>

@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name" translatable="false">分P助手</string>
+    <string name="main_requestUid">来吧，少年\n报上你的uid，和我签订契约吧</string>
+    <string name="main_whatUid"><u>什么是uid？</u></string>
+    <string name="main_yes">确定</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
+</resources>

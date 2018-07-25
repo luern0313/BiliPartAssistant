@@ -1,0 +1,92 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/shape_widgetbg">
+
+    <RelativeLayout
+        android:id="@+id/wid_rlay"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:gravity="center_vertical"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="分P助手"
+            android:textColor="#767676"
+            android:textSize="12sp" />
+
+        <RelativeLayout
+            android:id="@+id/wid_relay"
+            android:layout_width="21dp"
+            android:layout_height="match_parent"
+            android:layout_marginRight="12dp"
+            android:layout_toLeftOf="@+id/wid_setting">
+
+            <ImageView
+                android:id="@+id/wid_refresh"
+                android:layout_width="21dp"
+                android:layout_height="match_parent"
+                android:src="@drawable/icon_refresh" />
+
+            <ProgressBar
+                android:id="@+id/wid_loading"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="21dp"
+                android:layout_height="match_parent"
+                android:visibility="gone" />
+
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/wid_setting"
+            android:layout_width="21dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/icon_setting" />
+
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/wid_rlay"
+        android:layout_marginLeft="12dp"
+        android:background="#737373" />
+
+    <ListView
+        android:id="@+id/wid_listview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/wid_rlay"
+        android:clipToPadding="false"
+        android:divider="#00000000"
+        android:paddingBottom="5dp">
+
+    </ListView>
+
+    <TextView
+        android:id="@+id/wid_hint"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/wid_rlay"
+        android:background="@drawable/shape_widgetbg"
+        android:gravity="center"
+        android:text="暂无视频更新~\n如有更新会在这里显示的喵~"
+        android:textColor="#666666"
+        android:textSize="18sp"
+        android:visibility="visible" />
+
+    <ProgressBar
+        android:id="@+id/wid_seekbar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_below="@+id/wid_rlay"
+        android:progress="0"
+        android:visibility="gone" />
+</RelativeLayout>

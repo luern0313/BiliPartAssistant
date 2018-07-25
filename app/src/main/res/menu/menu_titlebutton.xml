@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/menuHelp"
+        android:icon="@drawable/icon_help"
+        android:title="帮助"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/menuYes"
+        android:icon="@drawable/icon_yes"
+        android:title="确定"
+        app:showAsAction="always" />
+</menu>
