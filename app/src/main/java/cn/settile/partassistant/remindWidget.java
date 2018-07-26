@@ -165,13 +165,13 @@ public class remindWidget extends AppWidgetProvider
                 try
                 {
                     JSONArray json = new JSONObject(bilibiliApi.getVideoPartList(vidlist[i])).getJSONArray("data");
-                    if(json.length() >= Integer.valueOf(vidpartlist.get(i)))
+                    if(json.length() > Integer.valueOf(vidpartlist.get(i)))
                     {
                         Elements tempHead = Jsoup.parse(bilibiliApi.getVideoPage((String) vidlist[i])).head().getElementsByTag("meta");
                         JSONObject tempInfo = new JSONObject(bilibiliApi.getVideoInfo((String) vidlist[i])).getJSONObject("data");
                         updateVid.add(0, vidlist[i]);
                         ArrayList<String> string = new ArrayList<String>();
-                        for (int j = Integer.valueOf(vidpartlist.get(i)) - 1; j < json.length(); j++)
+                        for (int j = Integer.valueOf(vidpartlist.get(i)); j < json.length(); j++)
                         {
                             string.add("P" + (j + 1) + " : " + json.getJSONObject(j).get("part"));
                         }
@@ -224,8 +224,6 @@ public class remindWidget extends AppWidgetProvider
                 Elements tempHead = Jsoup.parse(bilibiliApi.getVideoPage((String) updateVid.get(i))).head().getElementsByTag("meta");
                 updateVidImg.add(downloadImage(tempHead.select("meta[itemprop=image]").attr("content")));
             }
-            Log.i("p", updateVid.size() + "");
-            Log.i("p", updateVidImg.size() + "");
             editor.putString("updateVid", updateVid.toString());
             editor.putString("updateVidPart", updateVidPart.toString());
             editor.putString("updateVidPlay", updateVidPlay.toString());
