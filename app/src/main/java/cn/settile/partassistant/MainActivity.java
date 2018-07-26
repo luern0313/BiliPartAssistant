@@ -1,11 +1,17 @@
 package cn.settile.partassistant;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -70,6 +76,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void run()
             {
+                //关闭加载中的标志
                 mainLoading.setVisibility(View.GONE);
             }
 
@@ -81,7 +88,6 @@ public class MainActivity extends AppCompatActivity
             public void run()
             {
                 JSONObject jsonObject = null;
-                //Log.i("partassistant", jsonData);
                 try
                 {
                     jsonObject = new JSONObject(jsonData);
@@ -99,6 +105,16 @@ public class MainActivity extends AppCompatActivity
 
             }
         };
+
+        if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O)
+        {
+            //只在Android O之上需要渠道
+            NotificationChannel notificationChannel = new NotificationChannel("视频更新通知", "视频更新通知", NotificationManager.IMPORTANCE_DEFAULT);
+            //如果这里用IMPORTANCE_NOENE就需要在系统的设置里面开启渠道，
+            //通知才能正常弹出
+            NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            mNotificationManager.createNotificationChannel(notificationChannel);
+        }
     }
 
     @Override
@@ -136,12 +152,13 @@ public class MainActivity extends AppCompatActivity
                 {
                     try
                     {
-                        if(sharedPreferences.getString("videoList", "").equals(""))
-                        //第一次进入
+                        if(bilibiliApi.isUidExist(uid))
                         {
-                            if(bilibiliApi.isUidExist(uid))
+                            jsonData = bilibiliApi.getFav(uid);
+                            if(sharedPreferences.getString("videoList", "").equals(""))
+                            //第一次进入
                             {
-                                jsonData = bilibiliApi.getFav(uid);
+
                                 ArrayList page = new ArrayList<Integer>();
                                 ArrayList fid = new ArrayList<Integer>();
                                 JSONArray data = new JSONObject(jsonData).getJSONObject("data").getJSONArray("archive");
@@ -175,24 +192,24 @@ public class MainActivity extends AppCompatActivity
                             }
                             else
                             {
-                                Looper.prepare();
-                                new AlertDialog.Builder(ctx).setMessage("uid不存在！请检查你的uid!").setPositiveButton("确定", null).show();
-                                handler.post(runnableUi);
-                                Looper.loop();
+                                favorList = new HashMap<Integer, Integer>();
+                                String list = sharedPreferences.getString("videoList", "[]");
+                                ArrayList<String> vlist = list.equals("[]") ? new ArrayList<String>() : new ArrayList<String>(Arrays.asList(list.substring(1, list.length() - 1).split(", ")));
+                                String partlist = sharedPreferences.getString("videoPartList", "[]");
+                                ArrayList<String> vplist = partlist.equals("[]") ? new ArrayList<String>() : new ArrayList<String>(Arrays.asList(partlist.substring(1, partlist.length() - 1).split(", ")));
+                                for (int i = 0; i < vlist.size(); i++)
+                                    favorList.put(Integer.parseInt(vlist.get(i)), Integer.parseInt(vplist.get(i)));
                             }
+                            handler.post(runnableUi);
+                            handler.post(jsonUi);
                         }
                         else
                         {
-                            favorList = new HashMap<Integer, Integer>();
-                            String list = sharedPreferences.getString("videoList", "[]");
-                            ArrayList<String> vlist = list.equals("[]") ? new ArrayList<String>() : new ArrayList<String>(Arrays.asList(list.substring(1, list.length() - 1).split(", ")));
-                            String partlist = sharedPreferences.getString("videoPartList", "[]");
-                            ArrayList<String> vplist = partlist.equals("[]") ? new ArrayList<String>() : new ArrayList<String>(Arrays.asList(partlist.substring(1, partlist.length() - 1).split(", ")));
-                            for (int i = 0; i < vlist.size(); i++)
-                                favorList.put(Integer.parseInt(vlist.get(i)), Integer.parseInt(vplist.get(i)));
+                            Looper.prepare();
+                            new AlertDialog.Builder(ctx).setMessage("uid不存在！请检查你的uid!").setPositiveButton("确定", null).show();
+                            handler.post(runnableUi);
+                            Looper.loop();
                         }
-                        handler.post(runnableUi);
-                        handler.post(jsonUi);
                     } catch (JSONException e)
                     {
                         e.printStackTrace();

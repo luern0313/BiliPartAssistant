@@ -33,6 +33,7 @@
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="cn.settile.partassistant.widget.refresh" />
                 <action android:name="cn.settile.partassistant.widget.click" />
+                <action android:name="cn.settile.partassistant.widget.notify" />
                 <!--<category android:name="android.intent.category.DEFAULT" />-->
             </intent-filter>
 

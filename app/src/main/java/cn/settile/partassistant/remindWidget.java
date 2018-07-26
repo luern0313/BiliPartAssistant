@@ -1,5 +1,7 @@
 package cn.settile.partassistant;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
@@ -10,6 +12,9 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
@@ -25,6 +30,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Implementation of App Widget functionality.
@@ -37,7 +46,6 @@ public class remindWidget extends AppWidgetProvider
     static SharedPreferences.Editor editor;
 
     int[] mAppWidgetIds;
-
     Intent lvIntent;
 
     public static ArrayList updateVid = new ArrayList();
@@ -80,8 +88,7 @@ public class remindWidget extends AppWidgetProvider
         mRemoteViews.setViewVisibility(R.id.wid_refresh, View.GONE);
         mRemoteViews.setViewVisibility(R.id.wid_loading, View.VISIBLE);
         mRemoteViews.setViewVisibility(R.id.wid_seekbar, View.VISIBLE);
-        if(updateVid.size() == 0)
-            mRemoteViews.setViewVisibility(R.id.wid_hint, View.VISIBLE);
+        if(updateVid.size() == 0) mRemoteViews.setViewVisibility(R.id.wid_hint, View.VISIBLE);
 
         new Thread(new Runnable()
         {
@@ -129,6 +136,11 @@ public class remindWidget extends AppWidgetProvider
                 Intent yintent = new Intent(Intent.ACTION_VIEW, uri);
                 context.startActivity(yintent);
                 break;
+            case "cn.settile.partassistant.widget.notify":
+                Uri nuri = Uri.parse("http://www.bilibili.com/video/av" + updateVid.get(intent.getExtras().getInt("position", 1)) + "?share_medium=android&share_source=qq");
+                Intent nintent = new Intent(Intent.ACTION_VIEW, nuri);
+                context.startActivity(nintent);
+                break;
         }
     }
 
@@ -145,18 +157,21 @@ public class remindWidget extends AppWidgetProvider
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
             ComponentName componentName = new ComponentName(context, remindWidget.class);
 
+            Bitmap btm = BitmapFactory.decodeResource(context.getResources(), R.drawable.icon_icon);
+
+            NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
             for (int i = 0; i < vidlist.length; i++)
             {
                 try
                 {
                     JSONArray json = new JSONObject(bilibiliApi.getVideoPartList(vidlist[i])).getJSONArray("data");
-                    if(json.length() > Integer.valueOf(vidpartlist.get(i)))
+                    if(json.length() >= Integer.valueOf(vidpartlist.get(i)))
                     {
                         Elements tempHead = Jsoup.parse(bilibiliApi.getVideoPage((String) vidlist[i])).head().getElementsByTag("meta");
                         JSONObject tempInfo = new JSONObject(bilibiliApi.getVideoInfo((String) vidlist[i])).getJSONObject("data");
                         updateVid.add(0, vidlist[i]);
                         ArrayList<String> string = new ArrayList<String>();
-                        for (int j = Integer.valueOf(vidpartlist.get(i)); j < json.length(); j++)
+                        for (int j = Integer.valueOf(vidpartlist.get(i)) - 1; j < json.length(); j++)
                         {
                             string.add("P" + (j + 1) + " : " + json.getJSONObject(j).get("part"));
                         }
@@ -167,6 +182,24 @@ public class remindWidget extends AppWidgetProvider
                         updateVidPlay.add(0, favorvidActivity.numSimplify((int) tempInfo.get("view")));
                         updateVidDanmu.add(0, favorvidActivity.numSimplify((int) tempInfo.get("danmaku")));
                         vidpartlist.set(i, String.valueOf(json.length()));
+
+                        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, "视频更新通知")
+                                .setContentTitle(updateVidUp.get(0) + " 更新了视频！")
+                                .setContentText(String.valueOf(updateVidTitle.get(0)))
+                                .setTicker(updateVidUp.get(0) + " 更新了视频！")//第一次提示消息的时候显示在通知栏上
+                                .setLargeIcon(btm)
+                                .setSmallIcon(R.drawable.icon_smallicon)
+                                .setAutoCancel(true);
+                        Intent resultIntent = new Intent(context, remindWidget.class);
+                        resultIntent.setAction("cn.settile.partassistant.widget.notify");
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("position", vidlist.length - i - 1);
+                        resultIntent.putExtras(bundle);
+                        PendingIntent resultPendingIntent = PendingIntent.getBroadcast(context, i, resultIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+                        // 设置通知主题的意图
+                        mBuilder.setContentIntent(resultPendingIntent);
+                        //获取通知管理器对象
+                        mNotificationManager.notify(i, mBuilder.build());
                     }
                     mRemoteViews.setProgressBar(R.id.wid_seekbar, 100, Math.round(100 * i / vidlist.length), false);
                     appWidgetManager.updateAppWidget(componentName, remoteViews);
@@ -179,7 +212,7 @@ public class remindWidget extends AppWidgetProvider
             if(updateVid.size() > 30)
             //只保留前三十个
             {
-                for (int k = 30; k < updateVid.size();)
+                for (int k = 30; k < updateVid.size(); )
                 {
                     updateVid.remove(k);
                     updateVidPart.remove(k);
@@ -203,8 +236,7 @@ public class remindWidget extends AppWidgetProvider
             editor.putString("videoPartList", vidpartlist.toString());
             editor.commit();
 
-            if(updateVid.size() > 0)
-                mRemoteViews.setViewVisibility(R.id.wid_hint, View.GONE);
+            if(updateVid.size() > 0) mRemoteViews.setViewVisibility(R.id.wid_hint, View.GONE);
             mRemoteViews.setViewVisibility(R.id.wid_refresh, View.VISIBLE);
             mRemoteViews.setViewVisibility(R.id.wid_loading, View.GONE);
             mRemoteViews.setViewVisibility(R.id.wid_seekbar, View.GONE);
