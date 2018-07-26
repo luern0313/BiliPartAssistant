@@ -121,14 +121,13 @@ public class favorboxActivity extends AppCompatActivity
         switch (item.getItemId())
         {
             case R.id.menuHelp:
-                new AlertDialog.Builder(ctx).setMessage("请在收藏夹内选中你要提醒的视频\n之后你可以随时在这里修改\n（默认只选中有多P的视频）").setPositiveButton("确定", null).show();
+                new AlertDialog.Builder(ctx).setMessage("请在收藏夹内选中你要提醒的视频\n之后你可以随时在这里修改\n（默认只选中有多P的视频）\n（如没有收藏夹或少收藏夹，请检查是否不公开收藏夹或是否有收藏夹设为私密）").setPositiveButton("确定", null).show();
                 return true;
             case R.id.menuYes:
                 editor.putString("videoList", MainActivity.favorList.keySet().toString());
                 editor.putString("videoPartList", MainActivity.favorList.values().toString());
                 editor.putString("uid", intent.getStringExtra("uid"));
                 editor.commit();
-                Log.i("pp", MainActivity.favorList.keySet().toString());
                 new AlertDialog.Builder(ctx).setMessage("视频提醒列表已创建完成，系统会定时检查视频是否更新，请在桌面上创建桌面小部件来查看视频更新状态").setPositiveButton("确定", new DialogInterface.OnClickListener()
                 {
                     @Override

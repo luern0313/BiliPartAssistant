@@ -130,7 +130,6 @@ public class remindWidget extends AppWidgetProvider
                 context.startActivity(yintent);
                 break;
         }
-
     }
 
     private void update(Context context, RemoteViews remoteViews)
@@ -186,11 +185,14 @@ public class remindWidget extends AppWidgetProvider
                     updateVidPart.remove(k);
                 }
             }
+            updateVidImg.clear();
             for (int i = 0; i < updateVid.size(); i++)
             {
                 Elements tempHead = Jsoup.parse(bilibiliApi.getVideoPage((String) updateVid.get(i))).head().getElementsByTag("meta");
                 updateVidImg.add(downloadImage(tempHead.select("meta[itemprop=image]").attr("content")));
             }
+            Log.i("p", updateVid.size() + "");
+            Log.i("p", updateVidImg.size() + "");
             editor.putString("updateVid", updateVid.toString());
             editor.putString("updateVidPart", updateVidPart.toString());
             editor.putString("updateVidPlay", updateVidPlay.toString());
@@ -198,18 +200,18 @@ public class remindWidget extends AppWidgetProvider
             //editor.putString("updateVidImg", updateVidImg.toString());
             editor.putString("updateVidUp", updateVidUp.toString());
             editor.putString("updateVidDanmu", updateVidDanmu.toString());
-
             editor.putString("videoPartList", vidpartlist.toString());
             editor.commit();
 
             if(updateVid.size() > 0)
-                mRemoteViews.setViewVisibility(R.id.wid_hint, View.VISIBLE);
+                mRemoteViews.setViewVisibility(R.id.wid_hint, View.GONE);
             mRemoteViews.setViewVisibility(R.id.wid_refresh, View.VISIBLE);
             mRemoteViews.setViewVisibility(R.id.wid_loading, View.GONE);
             mRemoteViews.setViewVisibility(R.id.wid_seekbar, View.GONE);
             appWidgetManager.updateAppWidget(componentName, remoteViews);
             appWidgetManager.notifyAppWidgetViewDataChanged(mAppWidgetIds, R.id.wid_listview);
             Log.i("P", "done");
+
         } catch (NullPointerException e)
         {
             e.printStackTrace();

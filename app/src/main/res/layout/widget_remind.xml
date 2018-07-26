@@ -79,7 +79,7 @@
         android:text="暂无视频更新~\n如有更新会在这里显示的喵~"
         android:textColor="#666666"
         android:textSize="18sp"
-        android:visibility="visible" />
+        android:visibility="gone" />
 
     <ProgressBar
         android:id="@+id/wid_seekbar"

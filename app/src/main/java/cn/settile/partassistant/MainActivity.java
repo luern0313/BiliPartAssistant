@@ -209,6 +209,6 @@ public class MainActivity extends AppCompatActivity
 
     public void whatuidClick(View view)
     {
-        new AlertDialog.Builder(ctx).setMessage("如何查看UID？\n\n网页端：\n进入个人中心，uid在右下方。\n\n手机端：\n点击头像进入个人空间，uid在右上角的账号资料中").setPositiveButton("确定", null).show();
+        new AlertDialog.Builder(ctx).setMessage("如何查看UID？\n\n网页端：\n进入个人中心，uid在右下方。\n\n手机端：\n点击头像进入个人空间，uid在右上角的账号资料中\n\n（只能输入一次，请谨慎输入，要更改请情书应用数据或卸载重新安装）").setPositiveButton("确定", null).show();
     }
 }
