@@ -5,7 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:icon="@drawable/icon_icon"
         android:label="@string/app_name"
         android:roundIcon="@drawable/icon_icon"
@@ -14,7 +14,6 @@
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -28,12 +27,14 @@
             android:name=".settingActivity"
             android:label="设置"/>
 
-        <receiver android:name=".remindWidget">
+        <receiver android:name=".remindWidget"
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="cn.settile.partassistant.widget.refresh" />
                 <action android:name="cn.settile.partassistant.widget.click" />
                 <action android:name="cn.settile.partassistant.widget.notify" />
+
                 <!--<category android:name="android.intent.category.DEFAULT" />-->
             </intent-filter>
 
